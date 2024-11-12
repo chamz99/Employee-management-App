@@ -1,0 +1,279 @@
+<div class="container-fluid">
+  <div class="row p-2 nav-container">
+    <div class="col-6">
+      <h3>Employee List</h3>
+    </div>
+    <div class="col-6 text-end">
+      <button class="btn add-btn" (click)="openModal()">
+        Add Employee
+      </button>
+    </div>
+  </div>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search employees..."
+      (input)="onSearch($event)"
+      class="search-input"
+    />
+  </div>
+  @if (employeeList && employeeList.length > 0) {
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <!-- <th>Id</th> -->
+        <th>FirstName</th>
+        <th>LastName</th>
+        <th>Email</th>
+        <th>Position</th>
+        <th>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- @for (item of employeeList; track $index){ -->
+      <!-- Update -->
+      @for (item of filteredEmployeeList; track $index){
+      <tr>
+        <td>{{ item.firstName | uppercase }}</td>
+        <td>{{ item.lastName }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.position }}</td>
+        <td>{{ item.salary }}</td>
+        <td class="text-center">
+          <button class="btn btn-primary btn-edit" (click)="OnEdit(item)">Edit</button>
+
+          <button class="btn btn-danger btn-delete" (click)="onDelete(item)">
+            Delete
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <div *ngIf="totalPages > 1" class="pagination">
+    <button
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      [class.active]="i + 1 === currentPage"
+      (click)="goToPage(i + 1)"
+    >
+      {{ i + 1 }}
+    </button>
+  </div>
+  } @else {
+  <h5 class="text-center p-5">Employee Not Found</h5>
+  }
+</div>
+<div class="modal" id="myModal" #myModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header bg-info">
+        @if(employeeForm.value.id != 0) {
+        <h4 class="modal-title">Update Employee</h4>
+        }@else {
+        <h4 class="modal-title">Add Employee</h4>
+        }
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          (click)="closeModal()"
+        ></button>
+      </div>
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-12">
+              <input
+                type="text"
+                formControlName="firstName"
+                name="firstname"
+                class="form-control"
+                placeholder="FirstName"
+              />
+              <div
+                *ngIf="
+                  employeeForm.get('firstName')?.invalid &&
+                  (employeeForm.get('firstName')?.touched ||
+                    employeeForm.get('firstName')?.dirty)
+                "
+              >
+                <small
+                  class="text-danger"
+                  *ngIf="employeeForm.get('firstName')?.errors?.['required']"
+                >
+                  First name is required.
+                </small>
+                <small
+                  class="text-danger"
+                  *ngIf="employeeForm.get('firstName')?.errors?.['maxLength']"
+                >
+                  Maximum 50 characters allowed.
+                </small>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-6">
+                <input
+                  type="text"
+                  formControlName="lastName"
+                  name="lastName"
+                  class="form-control"
+                  placeholder="LastName"
+                />
+                <div
+                  *ngIf="
+                    employeeForm.get('lastName')?.invalid &&
+                    (employeeForm.get('lastName')?.touched ||
+                      employeeForm.get('lastName')?.dirty)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('lastName')?.errors?.['required']"
+                  >
+                    Last name is required.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('lastName')?.errors?.['maxLength']"
+                  >
+                    Maximum 50 characters allowed.
+                  </small>
+                </div>
+              </div>
+              <div class="col-6">
+                <input
+                  type="email"
+                  formControlName="email"
+                  name="email"
+                  class="form-control"
+                  placeholder="Email"
+                />
+                <div
+                  *ngIf="
+                    employeeForm.get('email')?.invalid &&
+                    (employeeForm.get('email')?.touched ||
+                      employeeForm.get('email')?.dirty)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('email')?.errors?.['required']"
+                  >
+                    Email is required.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('email')?.errors?.['email']"
+                  >
+                    Please enter a valid email address.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('email')?.errors?.['maxLength']"
+                  >
+                    Maximum 100 characters allowed.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-6">
+                <input
+                  type="text"
+                  formControlName="position"
+                  name="position"
+                  class="form-control"
+                  placeholder="Position"
+                />
+                <div
+                  *ngIf="
+                    employeeForm.get('position')?.invalid &&
+                    (employeeForm.get('position')?.touched ||
+                      employeeForm.get('position')?.dirty)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('position')?.errors?.['required']"
+                  >
+                    Position is required.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('position')?.errors?.['maxLength']"
+                  >
+                    Maximum 50 characters allowed.
+                  </small>
+                </div>
+              </div>
+              <div class="col-6">
+                <input
+                  type="number"
+                  formControlName="salary"
+                  name="salary"
+                  class="form-control"
+                  placeholder="Salary"
+                />
+                <div
+                  *ngIf="
+                    employeeForm.get('salary')?.invalid &&
+                    (employeeForm.get('salary')?.touched ||
+                      employeeForm.get('salary')?.dirty)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('salary')?.errors?.['required']"
+                  >
+                    Salary is required.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="employeeForm.get('salary')?.errors?.['pattern']"
+                  >
+                    Salary must be a decimal number with up to 2 decimal places.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            @if (employeeForm.value.id == 0) {
+            <button
+              type="submit"
+              [disabled]="this.employeeForm.invalid"
+              class="btn btn-primary"
+              data-dismiss="modal"
+            >
+              Save
+            </button>
+            }@else {
+            <button
+              type="submit"
+              [disabled]="this.employeeForm.invalid"
+              class="btn btn-success"
+              data-bs-dismiss="modal"
+            >
+              Update
+            </button>
+            }
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-dismiss="modal"
+              (click)="closeModal()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

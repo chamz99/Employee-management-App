@@ -1,0 +1,31 @@
+.search-container {
+  width: 100%;
+}
+
+.search-input {
+  float: right;
+  margin: 10px;
+}
+.pagination button {
+  padding: 5px 10px;
+  margin: 0 2px;
+  cursor: pointer;
+  color: black;
+}
+
+.pagination .active {
+  font-weight: bold;
+  background-color: #007bff;
+  color: black;
+}
+.nav-container {
+  background-color: pink;
+}
+
+.btn-edit {
+  margin-right: 5px;
+}
+.add-btn {
+  background-color: darkorchid;
+  color: white;
+}
